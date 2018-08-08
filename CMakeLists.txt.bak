@@ -1,0 +1,155 @@
+cmake_minimum_required(VERSION 3.10)
+project(Network3)
+
+set(CMAKE_CXX_STANDARD 11)
+
+
+# library files
+set(LIBDIR lib)
+set(MATHUTILS_LIB  $(LIBDIR)/libmathutils.a)
+set(CVODE_LIB  $(LIBDIR)/libsundials_cvode.a $(LIBDIR)/libsundials_nvecserial.a)
+set(MUPARSER_LIB  $(LIBDIR)/libmuparser.a)
+
+add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
+
+include_directories(src)
+include_directories(src/model)
+include_directories(src/model/rateExpressions)
+include_directories(src/model/reactions)
+include_directories(src/pla)
+include_directories(src/pla/base)
+include_directories(src/pla/eRungeKutta)
+include_directories(src/pla/eRungeKutta/base)
+include_directories(src/pla/eRungeKutta/extra)
+include_directories(src/pla/eRungeKutta/util)
+include_directories(src/pla/fEuler)
+include_directories(src/pla/midpoint)
+include_directories(src/pla/util)
+include_directories(src/util)
+include_directories(src/util/rand2)
+include_directories(src/util/MTrand)
+include_directories(include)
+include_directories(include/cvode)
+include_directories(include/nvector)
+include_directories(include/sundials)
+
+file(GLOB utils_SRC
+        "src/util/MTrand/*h"
+        "src/util/MTrand/*cpp"
+        )
+
+
+file(GLOB include_SRC
+        "include/*.h"
+        )
+
+file(GLOB rand_SRC
+        "src/util/rand2/rand2.cpp"
+        "src/util/rand2/rand2.hh"
+        )
+
+add_executable(Network3
+        ${utils_SRC}
+        ${rand_SRC}
+        ${include_SRC}
+        src/model/rateExpressions/rateElementary.cpp
+        src/model/rateExpressions/rateHill.cpp
+        src/model/rateExpressions/rateMM.cpp
+        src/model/rateExpressions/rateMuParser.cpp
+        src/model/rateExpressions/rateMuParser.hh
+        src/model/rateExpressions/rateSaturation.cpp
+        src/model/reactions/bioNetGenRxn.cpp
+        src/model/reactions/bioNetGenRxn.hh
+        src/model/reactions/elementaryRxn.cpp
+        src/model/reactions/functionalRxn.cpp
+        src/model/reactions/hillRxn.cpp
+        src/model/reactions/michaelisMentenRxn.cpp
+        src/model/reactions/saturationRxn.cpp
+        src/model/function.cpp
+        src/model/function.hh
+        src/model/observable.cpp
+        src/model/observable.hh
+        src/model/rateExpression.cpp
+        src/model/rateExpression.hh
+        src/model/reaction.cpp
+        src/model/reaction.hh
+        src/model/simpleSpecies.cpp
+        src/model/simpleSpecies.hh
+        src/model/species.hh
+        src/pla/base/firingGenerator.cpp
+        src/pla/base/firingGenerator.hh
+        src/pla/base/postleapChecker.cpp
+        src/pla/base/postleapChecker.hh
+        src/pla/base/rxnClassifier.cpp
+        src/pla/base/rxnClassifier.hh
+        src/pla/base/tauCalculator.cpp
+        src/pla/base/tauCalculator.hh
+        src/pla/eRungeKutta/base/eRungeKutta_BASE.hh
+        src/pla/eRungeKutta/base/eRungeKutta_TC_RC_FG_PL.cpp
+        src/pla/eRungeKutta/base/eRungeKutta_TC_RC_FG_rbPL.cpp
+        src/pla/eRungeKutta/base/eRungeKutta_TC_RC_FG_sbPL.cpp
+        src/pla/eRungeKutta/extra/eRK_FG.cpp
+        src/pla/eRungeKutta/extra/eRK_FG.hh
+        src/pla/eRungeKutta/extra/eRK_RC.cpp
+        src/pla/eRungeKutta/extra/eRK_RC.hh
+        src/pla/eRungeKutta/extra/eRungeKutta_EXTRA.hh
+        src/pla/eRungeKutta/extra/eRungeKutta_FG.cpp
+        src/pla/eRungeKutta/extra/eRungeKutta_FG_rbPL.cpp
+        src/pla/eRungeKutta/extra/eRungeKutta_FG_sbPL.cpp
+        src/pla/eRungeKutta/extra/eRungeKutta_RC_FG.cpp
+        src/pla/eRungeKutta/extra/eRungeKutta_RC_FG_PL.cpp
+        src/pla/eRungeKutta/extra/eRungeKutta_TC_FG_rbPL.cpp
+        src/pla/eRungeKutta/extra/eRungeKutta_TC_FG_sbPL.cpp
+        src/pla/eRungeKutta/util/aEff_Calculator.cpp
+        src/pla/eRungeKutta/util/aEff_Calculator.hh
+        src/pla/eRungeKutta/util/binomialCorrector_RK.cpp
+        src/pla/eRungeKutta/util/binomialCorrector_RK.hh
+        src/pla/eRungeKutta/util/butcherTableau.cpp
+        src/pla/eRungeKutta/util/butcherTableau.hh
+        src/pla/eRungeKutta/eRungeKutta.hh
+        src/pla/eRungeKutta/eRungeKutta_postTC_RC_FG_rbPL.cpp
+        src/pla/eRungeKutta/eRungeKutta_postTC_RC_FG_sbPL.cpp
+        src/pla/eRungeKutta/eRungeKutta_preTC_RC_FG_negPL.cpp
+        src/pla/eRungeKutta/eRungeKutta_preTC_RC_FG_rbPL.cpp
+        src/pla/eRungeKutta/eRungeKutta_preTC_RC_FG_sbPL.cpp
+        src/pla/fEuler/fEuler.hh
+        src/pla/fEuler/fEuler_FG.cpp
+        src/pla/fEuler/fEuler_RC.cpp
+        src/pla/fEuler/fEulerPreleapRB_TC.cpp
+        src/pla/fEuler/fEulerPreleapSB_TC.cpp
+        src/pla/fEuler/fEulerRB_PL.cpp
+        src/pla/fEuler/fEulerRB_TC_PL.cpp
+        src/pla/fEuler/fEulerSB_PL.cpp
+        src/pla/fEuler/fEulerSB_TC_PL.cpp
+        src/pla/midpoint/midpoint.hh
+        src/pla/midpoint/midpoint_FG.cpp
+        src/pla/midpoint/midpoint_RC_FG.cpp
+        src/pla/util/fixed_TC.cpp
+        src/pla/util/fixed_TC.hh
+        src/pla/util/g_Getter.cpp
+        src/pla/util/g_Getter.hh
+        src/pla/util/negPopChecker.cpp
+        src/pla/util/plCheckers.hh
+        src/pla/util/preleap_TC.cpp
+        src/pla/util/preleap_TC.hh
+        src/pla/util/rbChecker.cpp
+        src/pla/util/sbChecker.cpp
+        src/pla/PLA.cpp
+        src/pla/PLA.hh
+        src/util/constants.hh
+        src/util/conversion.cpp
+        src/util/conversion.hh
+        src/util/misc.cpp
+        src/util/misc.hh
+        src/util/rand.cpp
+        src/util/rand.hh
+        src/util/util.hh
+        src/network.cpp
+        src/network.h
+        src/network3.cpp
+        src/network3.hh
+        src/run_network.cpp
+        src/std_include.hh
+        )
+
+link_libraries(${MATHUTILS_LIB} ${CVODE_LIB} ${MUPARSER_LIB} )
