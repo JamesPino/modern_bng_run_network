@@ -1,4 +1,6 @@
-cmake_minimum_required(VERSION 2.8.4)
+cmake_minimum_required(VERSION 3.10.2)
+
+set(CMAKE_CXX_STANDARD 17)
 
 project(Network3)
 
@@ -76,8 +78,8 @@ link_libraries(libmathutils.a libmuparser.a libsundials_cvode.a libsundials_nvec
 
 if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
-    add_executable(run_network  ${SRC_FILES})
-    target_link_libraries(run_network ${Boost_LIBRARIES})
+    add_executable(parse_input ${SRC_FILES})
+    target_link_libraries(parse_input ${Boost_LIBRARIES})
 endif()
 
 #add_custom_target(

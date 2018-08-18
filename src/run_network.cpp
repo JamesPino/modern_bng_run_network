@@ -29,10 +29,7 @@ extern "C" {
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <signal.h>
-#include <sys/stat.h>
 #include <unistd.h>
-#include <errno.h>
 #include <time.h>
 #include <sys/times.h>
 #include <limits.h>
@@ -85,37 +82,6 @@ struct program_times t_elapsed(){
 }
 
 
-void parse_program_options(const int argc, const char *const argv[]) {
-    po::variables_map args;
-    po::options_description desc("Allowed options");
-    desc.add_options()
-            ("help", "Show brief usage message"),
-            ("atol,a", po::value<float>()->default_value(1e-8), "atol"),
-            ("rtol,r", po::value<float>()->default_value(1e-8), "rtol"),
-            ("tol,t", po::value<float>()->default_value(1e-8), "tol"),
-            ("z", po::value<float>()->default_value(3.14f), "iteration number"),
-            ("i", po::value<float>()->default_value(0.0f), "start_time"),
-            ("o", po::value<string>()->default_value(""), "outprefix")
-            ;
-
-    po::variables_map vm;
-    po::store(po::parse_command_line(argc, argv, desc), vm);
-    po::notify(vm);
-
-    if (vm.count("help")) {
-        std::cout << desc << '\n';
-    }
-    if (vm.count("a")) {
-        std::cout << vm["a"].as<double>() << '\n';
-    }
-
-    if (vm.count("r")) {
-        std::cout << vm["r"].as<double>() << '\n';
-    }
-
-}
-
-
 void print_error(){
 	char *usage=(char*)"run_network  [-bcdefkmsvx] [-a atol] [-g groupfile] [-h seed] [-i start_time] [-o outprefix] [-r rtol] [-t tol] [-z iteration number]";
 	fprintf(stderr,	"Usage:\n%s netfile sample_time n_sample\n",usage);
@@ -126,8 +92,7 @@ void print_error(){
 
 int main(int argc, char *argv[]){
 
-    parse_program_options(argc, argv);
-    return 0;
+//    return 0;
 	/* Output message */
 	fprintf(stdout, "run_network %s\n", RUN_NETWORK_VERSION);
 	fflush(stdout);
@@ -143,7 +108,7 @@ int main(int argc, char *argv[]){
     Rxn_array *reactions;
     int n, n_sample;
     double t_start=0.0, t, dt, atol = 1.0e-8, rtol = 1.0e-8;
-    double sample_time, *sample_times = 0x0/*, *st, t1*/;
+    double sample_time, *sample_times = nullptr/*, *st, t1*/;
     char c, buf[1000], *outpre = nullptr;
     int argleft, iarg = 1, error = 0;
     int save_file = 0;
